@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .dashboard-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .nav-item {
+            padding: 10px;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-item:hover {
+            background-color: #555;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+        }
+
+        /* Content Area Styles */
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .content-section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .section-header h2 {
+            margin: 0;
+        }
+
+        /* Sessions Section Styles */
+        .sessions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .session-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .session-card h3 {
+            margin-top: 0;
+        }
+
+        /* My Mentees Section Styles */
+        .mentees-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .mentee-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .mentee-card h3 {
+            margin-top: 0;
+        }
+
+        /* Messages Section Styles */
+        .messages-container {
+            display: flex;
+            height: 500px; /* Adjust as needed */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .messages-sidebar {
+            width: 300px;
+            background-color: #f9f9f9;
+            border-right: 1px solid #ddd;
+        }
+
+        .messages-header {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .conversations-list {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            overflow-y: auto;
+            height: calc(100% - 60px); /* Adjust based on header height */
+        }
+
+        .conversations-list li {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .conversations-list li:hover {
+            background-color: #eee;
+        }
+
+        .messages-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .no-conversation {
+            text-align: center;
+            color: #888;
+        }
+
+        .no-conversation i {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none;
+        }
+
+        /* Preloader Styles */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #preloader div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #preloader i {
+            color: #eab308;
+            animation: spin 1.2s linear infinite;
+        }
+
+        #preloader span {
+            color: #eab308;
+            margin-top: 16px;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg);}
+            100% { transform: rotate(360deg);}
+        }
+    </style>
+</head>
+<body>
+
+<!-- Preloader Start -->
+<div id="preloader" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;">
+    <div style="display:flex;flex-direction:column;align-items:center;">
+        <i class="fas fa-plug fa-3x" style="color:#eab308;animation:spin 1.2s linear infinite;"></i>
+        <span style="color:#eab308;margin-top:16px;font-size:1.2rem;letter-spacing:1px;">Connecting...</span>
+    </div>
+</div>
+<style>
+    @keyframes spin {
+        0% { transform: rotate(0deg);}
+        100% { transform: rotate(360deg);}
+    }
+</style>
+<!-- Preloader End -->
+
+<div class="dashboard-container">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h1>Mentor Dashboard</h1>
+        <a href="#dashboard" class="nav-item" onclick="showSection('dashboard')">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="#sessions" class="nav-item" onclick="showSection('sessions')">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Sessions</span>
+        </a>
+        <a href="#my-mentees" class="nav-item" onclick="showSection('my-mentees')">
+            <i class="fas fa-users"></i>
+            <span>My Mentees</span>
+        </a>
+        <a href="#messages" class="nav-item" onclick="showSection('messages')">
+            <i class="fas fa-envelope"></i>
+            <span>Messages</span>
+        </a>
+        <!-- Add more navigation items as needed -->
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section">
+            <div class="section-header">
+                <h2>Dashboard</h2>
+                <p>Welcome to your mentor dashboard. Here's an overview of your activities.</p>
+            </div>
+            <p>Some quick stats and information will be displayed here.</p>
+        </section>
+
+        <!-- Sessions Section -->
+        <section id="sessions" class="content-section">
+            <div class="section-header">
+                <h2>Upcoming Sessions</h2>
+                <p>Manage and view your scheduled mentoring sessions</p>
+            </div>
+            <div class="sessions-grid">
+                <div class="session-card">
+                    <h3>Session with John Doe</h3>
+                    <p>Date: 2024-03-15</p>
+                    <p>Time: 10:00 AM</p>
+                    <p>Topic: Career Advice</p>
+                </div>
+                <div class="session-card">
+                    <h3>Session with Jane Smith</h3>
+                    <p>Date: 2024-03-22</p>
+                    <p>Time: 02:00 PM</p>
+                    <p>Topic: Resume Review</p>
+                </div>
+                <!-- More session cards here -->
+            </div>
+        </section>
+
+        <!-- My Mentees Section -->
+        <section id="my-mentees" class="content-section">
+            <div class="section-header">
+                <h2>My Mentees</h2>
+                <p>Manage your mentee relationships and track their progress</p>
+            </div>
+            <div class="mentees-grid" id="menteesGrid">
+                <!-- Mentees will be loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Messages Section -->
+        <section id="messages" class="content-section">
+            <div class="messages-container">
+                <div class="messages-sidebar">
+                    <div class="messages-header">
+                        <h3>Conversations</h3>
+                    </div>
+                    <div class="conversations-list" id="conversationsList">
+                        <!-- Conversations will be loaded here -->
+                    </div>
+                </div>
+                <div class="messages-main">
+                    <div class="chat-area" id="chatArea">
+                        <div class="no-conversation">
+                            <i class="fas fa-comments"></i>
+                            <h3>Select a conversation</h3>
+                            <p>Choose a conversation from the sidebar to start messaging</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add more sections as needed -->
+
+    </div>
+
+</div>
+
+<script>
+    function showSection(sectionId) {
+        // Hide all sections
+        const sections = document.querySelectorAll('.content-section');
+        sections.forEach(section => {
+            section.classList.add('hidden');
+        });
+
+        // Show the selected section
+        const selectedSection = document.getElementById(sectionId);
+        if (selectedSection) {
+            selectedSection.classList.remove('hidden');
+        }
+    }
+
+    // Show the dashboard section by default
+    showSection('dashboard');
+
+    // Hide preloader when page is fully loaded, after 3 seconds
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            document.getElementById('preloader').style.display = 'none';
+        }, 3000); // 3 seconds
+    });
+
+</script>
+
+</body>
+</html>

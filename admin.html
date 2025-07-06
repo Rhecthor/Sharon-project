@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - MentorHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00D4FF; /* Bright cyan */
+            --secondary-color: #FF007A; /* Vivid pink */
+            --background: #000000; /* Black background */
+            --surface: #1a1a1a;
+            --surface-light: #2a2a2a;
+            --text-primary: #F5F5F5; /* Light gray */
+            --text-secondary: #B0B0B0; /* Muted gray */
+            --border: #333333;
+            --gradient: linear-gradient(135deg, #00D4FF, #FF007A);
+            /* Light theme variables */
+            --background-light: #F5F5F5;
+            --surface-light-theme: #FFFFFF;
+            --surface-light-light: #E5E5E5;
+            --text-primary-light: #1a1a1a;
+            --text-secondary-light: #4B4B4B;
+            --border-light: #CCCCCC;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.light-theme {
+            background: var(--background-light);
+            color: var(--text-primary-light);
+        }
+
+        body.light-theme .sidebar,
+        body.light-theme .dashboard-header,
+        body.light-theme .users-table,
+        body.light-theme .stat-card,
+        body.light-theme .modal-content,
+        body.light-theme .users-table th {
+            background: var(--surface-light-theme);
+            border-color: var(--border-light);
+        }
+
+        body.light-theme .users-table td,
+        body.light-theme .nav-item,
+        body.light-theme .logout-btn {
+            color: var(--text-secondary-light);
+        }
+
+        body.light-theme .form-group input,
+        body.light-theme .form-group select,
+        body.light-theme .form-group textarea {
+            background: var(--surface-light-light);
+            border-color: var(--border-light);
+            color: var(--text-primary-light);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-section, .modal-content {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+        .nav-item.active {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.75rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 0, 122, 0.1);
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        body.light-theme .main-content {
+            background: var(--background-light);
+        }
+
+        .dashboard-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--gradient);
+            color: #000;
+            padding: 0.9rem 2rem;
+            border: none;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 0.9rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-color);
+            color: #fff;
+            border-color: var(--secondary-color);
+        }
+
+        .btn-full {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .stat-card h3 {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .recent-activity {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .recent-activity h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        /* Users Section */
+        .users-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 1rem;
+            max-width: 400px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 1rem;
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            border-radius: 10px 0 0 10px;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .search-btn {
+            padding: 1rem 1.5rem;
+            background: var(--gradient);
+            border: none;
+            border-radius: 0 10px 10px 0;
+            color: #000;
+            cursor: pointer;
+        }
+
+        .sort-btn {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .sort-btn:hover {
+            background: var(--primary-color);
+            color: #000;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .users-table th {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .users-table th.sortable:hover {
+            background: var(--primary-color);
+            color: #000;
+        }
+
+        .users-table td {
+            color: var(--text-secondary);
+        }
+
+        .action-btn {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+
+        .action-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        body.light-theme .modal {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-content {
+            background: var(--surface);
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .close {
+            color: var(--text-secondary);
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .form-group .required {
+            color: var(--secondary-color);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        /* Settings Section */
+        .settings-options {
+            display: grid;
+            gap: 1.5rem;
+            max-width: 600px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .checkbox-label input {
+            width: auto;
+            accent-color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 100%;
+                z-index: 2000;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .hamburger {
+                display: block;
+                position: fixed;
+                top: 1.5rem;
+                left: 1.5rem;
+                z-index: 2100;
+                background: none;
+                border: none;
+                color: var(--primary-color);
+                font-size: 1.8rem;
+                cursor: pointer;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Hide hamburger by default */
+        .hamburger {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Preloader Start -->
+<div id="preloader" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;">
+    <div style="display:flex;flex-direction:column;align-items:center;">
+        <i class="fas fa-plug fa-3x" style="color:#eab308;animation:spin 1.2s linear infinite;"></i>
+        <span style="color:#eab308;margin-top:16px;font-size:1.2rem;letter-spacing:1px;">Connecting...</span>
+    </div>
+</div>
+<style>
+    @keyframes spin {
+        0% { transform: rotate(0deg);}
+        100% { transform: rotate(360deg);}
+    }
+</style>
+<!-- Preloader End -->
+ 
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo" aria-label="MentorHub Home">
+                <i class="fas fa-graduation-cap"></i> MentorHub
+            </a>
+        </div>
+        <nav class="sidebar-nav" aria-label="Admin navigation">
+            <a href="#dashboard" class="nav-item active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="#users" class="nav-item" data-section="users"><i class="fas fa-users"></i> Users</a>
+            <a href="#analytics" class="nav-item" data-section="analytics"><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="#settings" class="nav-item" data-section="settings"><i class="fas fa-cog"></i> Settings</a>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <button class="hamburger" aria-label="Toggle sidebar" aria-expanded="false">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <section id="dashboard" class="content-section active">
+            <div class="dashboard-header">
+                <h1>Welcome, Admin</h1>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <div class="stat-number" id="totalUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Admins</h3>
+                    <div class="stat-number" id="adminCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Mentors</h3>
+                    <div class="stat-number" id="mentorCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Mentees</h3>
+                    <div class="stat-number" id="menteeCount">0</div>
+                </div>
+            </div>
+            <div class="recent-activity">
+                <h2>Recent Activity</h2>
+                <ul class="activity-list" id="activityList"></ul>
+            </div>
+        </section>
+
+        <section id="users" class="content-section">
+            <div class="dashboard-header">
+                <h1>Users</h1>
+            </div>
+            <div class="users-actions">
+                <button class="btn-primary" onclick="openAddUserModal()">Add User</button>
+                <button class="btn-secondary" onclick="exportUsers()">Export Users</button>
+                <div class="sort-btn" onclick="sortUsers('name')">Sort by Name</div>
+                <div class="sort-btn" onclick="sortUsers('email')">Sort by Email</div>
+                <div class="sort-btn" onclick="sortUsers('role')">Sort by Role</div>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="userSearch" placeholder="Search users..." aria-label="Search users">
+                <button class="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th class="sortable">ID</th>
+                        <th class="sortable">Name</th>
+                        <th class="sortable">Email</th>
+                        <th class="sortable">Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+            </table>
+        </section>
+
+        <section id="analytics" class="content-section">
+            <div class="dashboard-header">
+                <h1>Analytics</h1>
+            </div>
+            <button class="btn-primary" onclick="generateReport()">Generate Report</button>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <div class="stat-number" id="analyticsTotalUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Admins</h3>
+                    <div class="stat-number" id="analyticsAdminCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Mentors</h3>
+                    <div class="stat-number" id="analyticsMentorCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Mentees</h3>
+                    <div class="stat-number" id="analyticsMenteeCount">0</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="settings" class="content-section">
+            <div class="dashboard-header">
+                <h1>Settings</h1>
+            </div>
+            <div class="settings-options">
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="darkMode" onchange="toggleTheme()">
+                        <span>Enable Dark Mode</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="notifications" onchange="toggleNotifications()">
+                        <span>Enable Email Notifications</span>
+                    </label>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('userModal')">&times;</span>
+            <h2 id="modalTitle">Add User</h2>
+            <form id="userForm" onsubmit="handleUserSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userFirstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="userFirstName" name="firstName" placeholder="Enter first name" required aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="userLastName">Last Name <span class="required">*</span></label>
+                        <input type="text" id="userLastName" name="lastName" placeholder="Enter last name" required aria-required="true">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">Email <span class="required">*</span></label>
+                    <input type="email" id="userEmail" name="email" placeholder="Enter email" required aria-required="true">
+                </div>
+                <div class="form-group">
+                    <label for="userPassword">Password <span class="required">*</span></label>
+                    <input type="password" id="userPassword" name="password" placeholder="Enter password" required aria-required="true">
+                </div>
+                <div class="form-group">
+                    <label for="userRole">Role <span class="required">*</span></label>
+                    <select id="userRole" name="role" required aria-required="true">
+                        <option value="" disabled selected>Select a role</option>
+                        <option value="admin">Admin</option>
+                        <option value="mentor">Mentor</option>
+                        <option value="mentee">Mentee</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userCountry">Country</label>
+                        <input type="text" id="userCountry" name="country" placeholder="Enter country">
+                    </div>
+                    <div class="form-group">
+                        <label for="userZipcode">Zipcode</label>
+                        <input type="text" id="userZipcode" name="zipcode" placeholder="Enter zipcode">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="userPhone">Phone Number</label>
+                    <input type="tel" id="userPhone" name="phone" placeholder="Enter phone number">
+                </div>
+                <div class="form-group">
+                    <label for="userBio">Short Bio</label>
+                    <textarea id="userBio" name="bio" placeholder="Tell us about the user" rows="4"></textarea>
+                </div>
+                <input type="hidden" id="userId" name="id">
+                <div class="form-row">
+                    <button type="submit" class="btn-primary btn-full">Save</button>
+                    <button type="button" class="btn-secondary btn-full" onclick="closeModal('userModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete this user?</p>
+            <div class="form-row">
+                <button class="btn-primary btn-full" onclick="confirmDelete()">Delete</button>
+                <button class="btn-secondary btn-full" onclick="closeModal('deleteModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let deleteUserId = null;
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", () => {
+            // Check if admin is logged in
+            const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+            if (!currentUser || currentUser.role !== "admin") {
+                showMessage("Access denied. Please log in as an admin.", "error");
+                setTimeout(() => window.location.href = "login.html", 2000);
+                return;
+            }
+
+            // Load theme
+            const isDarkMode = localStorage.getItem("theme") !== "light";
+            document.body.classList.toggle("light-theme", !isDarkMode);
+            document.querySelector("#darkMode").checked = isDarkMode;
+
+            // Load notifications preference
+            const notifications = localStorage.getItem("notifications") === "true";
+            document.querySelector("#notifications").checked = notifications;
+
+            // Sidebar navigation
+            document.querySelectorAll(".nav-item").forEach(item => {
+                item.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const section = item.getAttribute("data-section");
+                    document.querySelectorAll(".content-section").forEach(s => s.classList.remove("active"));
+                    document.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+                    document.querySelector(`#${section}`).classList.add("active");
+                    item.classList.add("active");
+                    if (window.innerWidth <= 768) {
+                        document.querySelector(".sidebar").classList.remove("active");
+                        document.querySelector(".hamburger").setAttribute("aria-expanded", "false");
+                        document.querySelector(".hamburger").innerHTML = `<i class="fas fa-bars"></i>`;
+                    }
+                    if (section === "users") loadUsers();
+                    if (section === "analytics") loadAnalytics();
+                    if (section === "dashboard") loadDashboard();
+                });
+            });
+
+            // Hamburger menu
+            const hamburger = document.querySelector(".hamburger");
+            const sidebar = document.querySelector(".sidebar");
+            hamburger.addEventListener("click", () => {
+                sidebar.classList.toggle("active");
+                const isExpanded = sidebar.classList.contains("active");
+                hamburger.setAttribute("aria-expanded", isExpanded);
+                hamburger.innerHTML = `<i class="fas ${isExpanded ? "fa-times" : "fa-bars"}"></i>`;
+            });
+
+            // Search functionality
+            document.querySelector("#userSearch").addEventListener("input", () => loadUsers());
+
+            // Sort functionality
+            document.querySelectorAll(".users-table th.sortable").forEach(th => {
+                th.addEventListener("click", () => {
+                    const column = th.textContent.toLowerCase();
+                    sortUsers(column);
+                });
+            });
+
+            // Load initial data
+            loadDashboard();
+        });
+
+        // Load dashboard data
+        function loadDashboard() {
+            const users = JSON.parse(localStorage.getItem("users") || "[]");
+            const totalUsers = users.length;
+            const adminCount = users.filter(u => u.role === "admin").length;
+            const mentorCount = users.filter(u => u.role === "mentor").length;
+            const menteeCount = users.filter(u => u.role === "mentee").length;
+
+            document.querySelector("#totalUsers").textContent = totalUsers;
+            document.querySelector("#adminCount").textContent = adminCount;
+            document.querySelector("#mentorCount").textContent = mentorCount;
+            document.querySelector("#menteeCount").textContent = menteeCount;
+
+            // Recent activity
+            const activities = JSON.parse(localStorage.getItem("activities") || "[]").slice(0, 5);
+            const activityList = document.querySelector("#activityList");
+            activityList.innerHTML = activities.length ? activities.map(a => `<li>${a}</li>`).join("") : "<li>No recent activity.</li>";
+        }
+
+        // Load users into table
+        function loadUsers() {
+            const searchQuery = document.querySelector("#userSearch").value.toLowerCase();
+            const users = JSON.parse(localStorage.getItem("users") || "[]");
+            const tableBody = document.querySelector("#usersTableBody");
+            tableBody.innerHTML = "";
+
+            const filteredUsers = users.filter(user =>
+                user.firstName.toLowerCase().includes(searchQuery) ||
+                user.lastName.toLowerCase().includes(searchQuery) ||
+                user.email.toLowerCase().includes(searchQuery) ||
+                user.role.toLowerCase().includes(searchQuery)
+            );
+
+            filteredUsers.forEach(user => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.firstName} ${user.lastName}</td>
+                    <td>${user.email}</td>
+                    <td>${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
+                    <td>
+                        <a href="#" class="action-btn" onclick="openEditUserModal('${user.id}')">Edit</a>
+                        <a href="#" class="action-btn" onclick="openDeleteModal('${user.id}')">Delete</a>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Sort users
+        let sortDirection = {};
+        function sortUsers(column) {
+            const users = JSON.parse(localStorage.getItem("users") || "[]");
+            sortDirection[column] = !sortDirection[column];
+            const direction = sortDirection[column] ? 1 : -1;
+
+            users.sort((a, b) => {
+                let valA, valB;
+                if (column === "name") {
+                    valA = `${a.firstName} ${a.lastName}`.toLowerCase();
+                    valB = `${b.firstName} ${b.lastName}`.toLowerCase();
+                } else {
+                    valA = a[column].toLowerCase();
+                    valB = b[column].toLowerCase();
+                }
+                return valA > valB ? direction : valA < valB ? -direction : 0;
+            });
+
+            localStorage.setItem("users", JSON.stringify(users));
+            loadUsers();
+        }
+
+        // Load analytics data
+        function loadAnalytics() {
+            const users = JSON.parse(localStorage.getItem("users") || "[]");
+            const totalUsers = users.length;
+            const adminCount = users.filter(u => u.role === "admin").length;
+            const mentorCount = users.filter(u => u.role === "mentor").length;
+            const menteeCount = users.filter(u => u.role === "mentee").length;
+
+            document.querySelector("#analyticsTotalUsers").textContent = totalUsers;
+            document.querySelector("#analyticsAdminCount").textContent = adminCount;
+            document.querySelector("#analyticsMentorCount").textContent = mentorCount;
+            document.querySelector("#analyticsMenteeCount").textContent = menteeCount;
+        }
+
+        // Open add user modal
+        function openAddUserModal() {
+            const form = document.querySelector("#userForm");
+            form.reset();
+            document.querySelector("#modalTitle").textContent = "Add User";
+            document.querySelector("#userId").value = "";
+            const modal = document.querySelector("#userModal");
+            modal.style.display = "block";
+
+            // Pre-fill with tempUser data if available
+            const tempUser = JSON.parse(localStorage.getItem("tempUser") || "{}");
+            if (tempUser.email) {
+                document.querySelector("#userEmail").value = tempUser.email;
+                document.querySelector("#userPassword").value = tempUser.password;
+                document.querySelector("#userRole").value = tempUser.role;
+                localStorage.removeItem("tempUser");
+            }
+        }
+
+        // Open edit user modal
+        function openEditUserModal(userId) {
+            const users = JSON.parse(localStorage.getItem("users") || "[]");
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            document.querySelector("#modalTitle").textContent = "Edit User";
+            document.querySelector("#userId").value = user.id;
+            document.querySelector("#userFirstName").value = user.firstName;
+            document.querySelector("#userLastName").value = user.lastName;
+            document.querySelector("#userEmail").value = user.email;
+            document.querySelector("#userPassword").value = user.password || "";
+            document.querySelector("#userRole").value = user.role;
+            document.querySelector("#userCountry").value = user.country || "";
+            document.querySelector("#userZipcode").value = user.zipcode || "";
+            document.querySelector("#userPhone").value = user.phone || "";
+            document.querySelector("#userBio").value = user.bio || "";
+
+            const modal = document.querySelector("#userModal");
+            modal.style.display = "block";
+        }
+
+        // Open delete confirmation modal
+        function openDeleteModal(userId) {
+            deleteUserId = userId;
+            document.querySelector("#deleteModal").style.display = "block";
+        }
+
+        // Confirm delete
+        function confirmDelete() {
+            if (!deleteUserId) return;
+            let users = JSON.parse(localStorage.getItem("users") || "[]");
+            const user = users.find(u => u.id === deleteUserId);
+            users = users.filter(u => u.id !== deleteUserId);
+            localStorage.setItem("users", JSON.stringify(users));
+            logActivity(`User ${user.firstName} ${user.lastName} deleted`);
+            showMessage("User deleted successfully.", "success");
+            closeModal("deleteModal");
+            loadUsers();
+            loadAnalytics();
+            deleteUserId = null;
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            document.querySelector(`#${modalId}`).style.display = "none";
+            if (modalId === "userModal") document.querySelector("#userForm").reset();
+        }
+
+        // Handle user form submission
+        function handleUserSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const userId = formData.get("id");
+            const user = {
+                id: userId || Date.now().toString(),
+                firstName: formData.get("firstName")?.trim(),
+                lastName: formData.get("lastName")?.trim(),
+                email: formData.get("email")?.trim(),
+                password: formData.get("password")?.trim(),
+                role: formData.get("role"),
+                country: formData.get("country")?.trim() || "",
+                zipcode: formData.get("zipcode")?.trim() || "",
+                phone: formData.get("phone")?.trim() || "",
+                bio: formData.get("bio")?.trim() || "",
+                createdAt: userId ? (JSON.parse(localStorage.getItem("users") || "[]").find(u => u.id === userId)?.createdAt || new Date().toISOString()) : new Date().toISOString()
+            };
+
+            // Validation
+            if (!user.firstName || !user.lastName || !user.email || !user.password || !user.role) {
+                showMessage("All required fields must be filled.", "error");
+                return;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
+                showMessage("Please enter a valid email address.", "error");
+                return;
+            }
+
+            if (user.password.length < 6) {
+                showMessage("Password must be at least 6 characters long.", "error");
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem("users") || "[]");
+            if (userId) {
+                // Update existing user
+                users = users.map(u => (u.id === userId ? user : u));
+                logActivity(`User ${user.firstName} ${user.lastName} updated`);
+                showMessage("User updated successfully.", "success");
+            } else {
+                // Add new user
+                if (users.some(u => u.email === user.email && u.id !== userId)) {
+                    showMessage("This email is already registered.", "error");
+                    return;
+                }
+                users.push(user);
+                logActivity(`User ${user.firstName} ${user.lastName} added`);
+                showMessage("User added successfully.", "success");
+            }
+
+            localStorage.setItem("users", JSON.stringify(users));
+            closeModal("userModal");
+            loadUsers();
+            loadAnalytics();
+            loadDashboard();
+        }
+
+        // Log activity
+        function logActivity(message) {
+            const activities = JSON.parse(localStorage.getItem("activities") || "[]");
+            activities.unshift(`${new Date().toLocaleString()}: ${message}`);
+            localStorage.setItem("activities", JSON.stringify(activities.slice(0, 50))); // Keep last 50 activities
+        }
+
+        // Export users as CSV
+        function exportUsers() {
+            const users = JSON.parse(localStorage.getItem("users") || "[]");
+            const headers = ["ID", "First Name", "Last Name", "Email", "Role", "Country", "Zipcode", "Phone", "Bio", "Created At"];
+            const csv = [
+                headers.join(","),
+                ...users.map(user =>
+                    [
+                        user.id,
+                        `"${user.firstName}"`,
+                        `"${user.lastName}"`,
+                        user.email,
+                        user.role,
+                        `"${user.country || ""}"`,
+                        `"${user.zipcode || ""}"`,
+                        `"${user.phone || ""}"`,
+                        `"${user.bio || ""}"`,
+                        `"${user.createdAt || ""}"`
+                    ].join(",")
+                )
+            ].join("\n");
+
+            const blob = new Blob([csv], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `users_${new Date().toISOString().split("T")[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            logActivity("Users exported as CSV");
+            showMessage("Users exported successfully.", "success");
+        }
+
+        // Generate analytics report
+        function generateReport() {
+            const users = JSON.parse(localStorage.getItem("users") || "[]");
+            const totalUsers = users.length;
+            const adminCount = users.filter(u => u.role === "admin").length;
+            const mentorCount = users.filter(u => u.role === "mentor").length;
+            const menteeCount = users.filter(u => u.role === "mentee").length;
+            const report = [
+                ["Metric", "Value"],
+                ["Total Users", totalUsers],
+                ["Admins", adminCount],
+                ["Mentors", mentorCount],
+                ["Mentees", menteeCount],
+                ["Generated At", new Date().toLocaleString()]
+            ].map(row => row.join(",")).join("\n");
+
+            const blob = new Blob([report], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `analytics_report_${new Date().toISOString().split("T")[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            logActivity("Analytics report generated");
+            showMessage("Analytics report generated successfully.", "success");
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            const isDarkMode = document.querySelector("#darkMode").checked;
+            document.body.classList.toggle("light-theme", !isDarkMode);
+            localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+            logActivity(`Theme switched to ${isDarkMode ? "dark" : "light"} mode`);
+            showMessage(`Switched to ${isDarkMode ? "dark" : "light"} mode.`, "info");
+        }
+
+        // Toggle notifications
+        function toggleNotifications() {
+            const notifications = document.querySelector("#notifications").checked;
+            localStorage.setItem("notifications", notifications);
+            logActivity(`Email notifications ${notifications ? "enabled" : "disabled"}`);
+            showMessage(`Email notifications ${notifications ? "enabled" : "disabled"}.`, "info");
+        }
+
+        // Handle logout
+        function handleLogout() {
+            logActivity("Admin logged out");
+            localStorage.removeItem("currentUser");
+            localStorage.removeItem("rememberUser");
+            showMessage("Logged out successfully.", "success");
+            setTimeout(() => window.location.href = "login.html", 2000);
+        }
+
+        // Show notification message
+        function showMessage(message, type = "info") {
+            const existingMessages = document.querySelectorAll(".notification");
+            existingMessages.forEach(msg => msg.remove());
+
+            const messageEl = document.createElement("div");
+            messageEl.className = `notification notification-${type}`;
+            messageEl.textContent = message;
+
+            messageEl.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                color: #fff;
+                font-weight: 600;
+                z-index: 2000;
+                max-width: 300px;
+                animation: slideInRight 0.3s ease;
+                ${getMessageColor(type)}
+            `;
+
+            document.body.appendChild(messageEl);
+
+            setTimeout(() => {
+                messageEl.style.animation = "slideOutRight 0.3s ease";
+                setTimeout(() => messageEl.remove(), 300);
+            }, 3000);
+        }
+
+        function getMessageColor(type) {
+            switch (type) {
+                case "success":
+                    return "background: #00D4FF;";
+                case "error":
+                    return "background: #FF007A;";
+                case "warning":
+                    return "background: #FF8C00;";
+                case "info":
+                    return "background: #3B82F6;";
+                default:
+                    return "background: #6B7280;";
+            }
+        }
+
+    // Hide preloader when page is fully loaded, after 3 seconds
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            document.getElementById('preloader').style.display = 'none';
+        }, 3000); // 3 seconds
+    });
+    </script>
+</body>
+</html>

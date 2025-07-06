@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MentorHub - Unlock Your Potential</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Preloader Start -->
+    <div id="preloader" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;">
+        <div style="display:flex;flex-direction:column;align-items:center;">
+            <i class="fas fa-plug fa-3x" style="color:#eab308;animation:spin 1.2s linear infinite;"></i>
+            <span style="color:#eab308;margin-top:16px;font-size:1.2rem;letter-spacing:1px;">Connecting...</span>
+        </div>
+    </div>
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg);}
+            100% { transform: rotate(360deg);}
+        }
+    </style>
+    <!-- Preloader End -->
+    <header class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand" aria-label="MentorHub Home">
+                <i class="fas fa-graduation-cap"></i> MentorHub
+            </a>
+            <button class="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav class="navbar-menu" aria-label="Main navigation">
+                <a href="#home">Home</a>
+                <a href="#features">Features</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#contact">Contact</a>
+                <a href="signin.html" class="btn-primary">Sign In</a>
+                <a href="login.html" class="btn-secondary">Sign Up</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="container hero-content">
+                <h1>Unlock Your Potential with the Right Mentor</h1>
+                <p>Connect with experienced mentors in your field and accelerate your career growth.</p>
+                <div class="hero-actions">
+                    <a href="signin.html" class="btn-primary">Find a Mentor</a>
+                    <a href="signin.html" class="btn-secondary">Become a Mentor</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="section-title">Our Key Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-brain"></i>
+                        <h3>Smart Matching</h3>
+                        <p>Our AI-powered algorithm connects you with the most relevant mentors based on your goals and interests.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-video"></i>
+                        <h3>Video Conferencing</h3>
+                        <p>Seamlessly connect with your mentor through integrated video calls and screen sharing.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Community Forum</h3>
+                        <p>Engage with a vibrant community of mentors and mentees, share insights, and ask questions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="testimonials">
+            <div class="container">
+                <h2 class="section-title">What Our Community Says</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"MentorHub transformed my career. My mentor helped me land my dream job at Google!"</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <h4>Alex Chen</h4>
+                                <span>Software Engineer</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"Being a mentor on this platform has been incredibly rewarding. I've helped 50+ mentees achieve their goals."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <h4>Sarah Martinez</h4>
+                                <span>Senior Product Manager</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            <p>"The platform's matching algorithm is incredible. I found the perfect mentor for my startup journey."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <h4>David Kim</h4>
+                                <span>Entrepreneur</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <div class="steps-container">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Create Your Profile</h3>
+                            <p>Sign up and tell us about your goals, skills, and what you're looking for in a mentor or mentee.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Get Matched</h3>
+                            <p>Our AI algorithm finds the perfect matches based on your preferences, goals, and compatibility.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Start Learning</h3>
+                            <p>Connect with your matches, schedule sessions, and begin your mentorship journey.</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3>Achieve Goals</h3>
+                            <p>Track your progress, celebrate milestones, and achieve your personal and professional goals.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="newsletter">
+            <div class="container newsletter-content">
+                <h2>Stay Updated</h2>
+                <p>Get the latest mentorship tips, success stories, and platform updates delivered to your inbox.</p>
+                <form class="newsletter-form" onsubmit="handleNewsletterSignup(event)">
+                    <input type="email" placeholder="Enter your email" aria-label="Email for newsletter" required>
+                    <button type="submit" class="btn-primary">Subscribe</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MentorHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+  <script>
+    // Hide preloader when page is fully loaded, after 3 seconds
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            document.getElementById('preloader').style.display = 'none';
+        }, 3000); // 3 seconds
+    });
+</script>
+</body>
+</html>
